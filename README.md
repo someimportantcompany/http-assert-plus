@@ -1,7 +1,7 @@
 # http-assert-plus
 
 [![NPM](https://badge.fury.io/js/http-assert-plus.svg)](https://npm.im/http-assert-plus)
-[![CI](https://github.com/someimportantcompany/http-assert-plus/workflows/Test/badge.svg?branch=master)](https://github.com/someimportantcompany/http-assert-plus/actions?query=branch%3Amaster)
+[![CI](https://github.com/someimportantcompany/http-assert-plus/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/someimportantcompany/http-assert-plus/actions/workflows/ci.yml)
 [![Coverage](https://coveralls.io/repos/github/someimportantcompany/http-assert-plus/badge.svg)](https://coveralls.io/github/someimportantcompany/http-assert-plus)
 
 More assertions with status codes.
