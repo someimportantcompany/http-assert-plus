@@ -15,12 +15,11 @@
   "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "files": [
-    "./assert.js"
+    "assert.js"
   ],
   "keywords": [
     "http",
-    "assert",
-    "plus"
+    "assert"
   ],
   "dependencies": {},
   "devDependencies": {

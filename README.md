@@ -75,6 +75,6 @@ assert.deepEqual = (a, b, ...args) => assert(deepEqual(a, b), ...args);
 assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict: true }), ...args);
 ```
 
-## Notes
+## Notes
 
 - Many thanks to the original team behind [http-assert](https://npm.im/http-assert).
