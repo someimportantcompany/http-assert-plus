@@ -1,0 +1,67 @@
+name: CI
+on:
+  - push
+jobs:
+  lint:
+    name: node-${{ matrix.node }}
+    runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 12.x
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use node-${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ env.NODE_VERSION }}-
+            ${{ runner.os }}-
+
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    name: node-${{ matrix.node }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '8.x', '10.x', '12.x', '14.x', '16.x' ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Use node-${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+      - name: Cache node_modules
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
+          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.node }}-
+            ${{ runner.os }}-
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          flag-name: run-${{ matrix.test_number }}
+          parallel: true
+
+  coverage:
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+    - name: Coveralls Finished
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        parallel-finished: true

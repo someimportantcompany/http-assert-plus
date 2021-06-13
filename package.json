@@ -1,0 +1,61 @@
+{
+  "name": "http-assert-plus",
+  "version": "1.0.0",
+  "description": "More assertions with status codes",
+  "main": "./assert.js",
+  "scripts": {
+    "lint": "eslint --ext .js .",
+    "test": "nyc mocha",
+    "preversion": "npm run lint && npm test",
+    "postversion": "git push && git push --tags"
+  },
+  "repository": "https://github.com/someimportantcompany/http-assert-plus",
+  "homepage": "https://github.com/someimportantcompany/http-assert-plus#readme",
+  "bugs": "https://github.com/someimportantcompany/http-assert-plus/issues",
+  "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
+  "license": "MIT",
+  "files": [
+    "./assert.js"
+  ],
+  "keywords": [
+    "http",
+    "assert",
+    "plus"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-sort-requires": "^2.1.0",
+    "mocha": "^6.2.3",
+    "module-alias": "^2.2.2",
+    "nyc": "^15.1.0"
+  },
+  "engines": {
+    "node": ">= 8.0.0",
+    "npm": ">= 6.0.0"
+  },
+  "_moduleAliases": {
+    "http-assert-plus": "./"
+  },
+  "mocha": {
+    "exit": true,
+    "require": [
+      "module-alias/register"
+    ],
+    "spec": [
+      "*.test.js"
+    ],
+    "ui": "bdd"
+  },
+  "nyc": {
+    "exclude": [
+      "*.test.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
+  }
+}
