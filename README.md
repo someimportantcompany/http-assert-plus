@@ -10,17 +10,17 @@ More assertions with status codes.
 const assert = require('http-assert-plus');
 
 const username = 'jdrydn';
-assert(username === 'someimportantcompany', 401, 'Authorization failed', {
+assert(username === 'someimportantcompany', 403, 'Authorization failed', {
   code: 'NOT_AUTHORIZED',
   username,
 });
 
 // Error: Authorization failed
-//     at createErr (./http-assert-plus/README.md:9:7) {
+//     at createErr (http-assert-plus/README.md:13:7) {
 //   code: 'NOT_AUTHORIZED',
-//   statusCode: 401,
-//   status: 401,
-//   statusText: 'Unauthorized',
+//   statusCode: 403,
+//   status: 403,
+//   statusText: 'Forbidden',
 //   username: 'jdrydn'
 // }
 ```
@@ -36,28 +36,62 @@ $ npm install http-assert-plus
 This API matches the [built-in `assert` module](https://nodejs.org/dist/latest/docs/api/assert.html), and builds upon the success of [`http-assert`](https://github.com/jshttp/http-assert), with a few differences:
 
 - Each function throws an instance of `Error` when the assertion fails.
-- Zero dependencies - but at a price.
+- Zero dependencies.
 
-<dl>
-  <dt>assert(value, [status], [message], [props])</dt>
-  <dd>Tests if `value` is truthy, and throws an error if falsey.</dd>
-  <dt>assert.ok(value, [status], [message], [props])</dt>
-  <dd>Alias for above, tests if `value` is truthy, and throws an error if falsey.</dd>
-  <dt>assert.fail([status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.equal(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.notEqual(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.strictEqual(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.notStrictEqual(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.includes(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-  <dt>assert.notIncludes(a, b, [status], [message], [props])</dt>
-  <dd>Description</dd>
-</dl>
+#### `assert(value, [status], [message], [props])`
+Tests if `value` is truthy, and throws an `Error` if falsey.
+
+#### `assert.ok(value, [status], [message], [props])`
+Alias for above, tests if `value` is truthy, and throws an `Error` if falsey.
+
+#### `assert.fail([status], [message], [props])`
+Always throws an `Error` with the provided status/message/props.
+
+#### `assert.equal(a, b, [status], [message], [props])`
+Tests shallow, coercive equality between `a` & `b` using `==`.
+
+#### `assert.notEqual(a, b, [status], [message], [props])`
+Tests shallow, coercive inequality between `a` & `b` using `!=`.
+
+#### `assert.strictEqual(a, b, [status], [message], [props])`
+Tests strict equality between `a` & `b` using `===`.
+
+#### `assert.notStrictEqual(a, b, [status], [message], [props])`
+Tests strict inequality between `a` & `b` using `!==`.
+
+#### `assert.includes(a, b, [status], [message], [props])`
+Tests whether `a` includes `b` - where `a` has a method call `includes`.
+
+#### `assert.notIncludes(a, b, [status], [message], [props])`
+Tests whether `a` does not include `b` - where `a` has a method `includes`.
+
+### Creating your own instance
+
+You can optionally create your own instance of `http-assert-plus`, useful if you want to add your own methods for common assertions:
+
+```js
+const assert = require('http-assert-plus');
+
+ctx.assert = assert.create();
+ctx.assert.isAuthenticated = (props = null) => {
+  const { isAuthenticated } = ctx.state;
+  assert(isAuthenticated, 401, 'You are not authenticated', {
+    code: 'NOT_AUTHENTICATED',
+    ...props,
+  });
+};
+
+// Later on:
+ctx.assert.isAuthenticated({ action: 'EditUser' });
+// Error: You are not authenticated
+//     at isAuthenticated (http-assert-plus/README.md:78:9) {
+//   code: 'NOT_AUTHENTICATED',
+//   statusCode: 401,
+//   status: 401,
+//   statusText: 'Unauthorized',
+//   username: 'jdrydn'
+// }
+```
 
 ### What about deep equality?
 
@@ -70,11 +104,26 @@ const deepEqual = require('deep-equal');
 assert(deepEqual(a, b), 400, 'These two are not entirely equal');
 assert(deepEqual(a, b, { strict: true }), 400, 'These two are not entirely equal');
 
-// Or add static methods to your instance of http-assert-plus!
-assert.deepEqual = (a, b, ...args) => assert(deepEqual(a, b), ...args);
-assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict: true }), ...args);
+// Or create your own http-assert-plus instance:
+req.assert = assert.create();
+req.assert.deepEqual = (a, b, ...args) => assert(deepEqual(a, b), ...args);
+req.assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict: true }), ...args);
+
+req.assert.deepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not equal');
+req.assert.strictDeepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not strict-equal');
+// Error: Array does not strict-equal
+//     at REPL:1:27 (http-assert-plus/README.md:113:27) {
+//   statusCode: 400,
+//   status: 400,
+//   statusText: 'Bad Request'
+// }
 ```
 
-## Notes
+## Browser supported?
 
-- Many thanks to the original team behind [http-assert](https://npm.im/http-assert).
+Yes! Not all browsers support [`Error.captureStackTrace`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error#static_methods) so this library checks if it is present in the current environment - if it isn't available the only behaviour you'll likely want to change is to pre-construct `Error` arguments to preserve a proper stack trace, like so:
+
+```js
+const { origin } = window.location;
+assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'));
+```
