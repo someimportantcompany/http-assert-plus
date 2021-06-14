@@ -1,6 +1,6 @@
 {
   "name": "http-assert-plus",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "More assertions with status codes",
   "main": "./assert.js",
   "scripts": {
