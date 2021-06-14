@@ -4,11 +4,11 @@ function assert(value, err) {
   }
 }
 
-function prepareErr(assertConstructor, defaults, ...args) {
-  const isStatus = s => typeof s === 'number' && typeof statuses[`${s}`] === 'string';
-  const isErrorLike = e => typeof e === 'string' || e instanceof Error;
-  const isObject = o => Object.prototype.toString.call(o) === '[object Object]';
+const isStatus = s => typeof s === 'number' && typeof statuses[`${s}`] === 'string';
+const isErrorLike = e => typeof e === 'string' || e instanceof Error;
+const isObject = o => Object.prototype.toString.call(o) === '[object Object]';
 
+function prepareErr(assertConstructor, defaults, ...args) {
   let err = 'An error occurred',
       props = null,
       status = null;
@@ -60,7 +60,7 @@ function prepareErr(assertConstructor, defaults, ...args) {
     Error.captureStackTrace(err, assertConstructor);
   }
 
-  Object.assign(err, { ...defaults, ...props });
+  Object.assign(err, defaults || {}, props || {});
 
   if (isStatus(status)) {
     err.status = err.statusCode = status;
@@ -70,38 +70,40 @@ function prepareErr(assertConstructor, defaults, ...args) {
   return err;
 }
 
-function createAssertions(defaults) {
+function createAssertions(defaults = {}) {
+  assert(isObject(defaults), new TypeError('Expected createAssertions arg to be an object'));
+
   function assertPlus(value, ...err) {
-    assert(value, prepareErr(assertPlus, { ...defaults }, ...err));
+    assert(value, prepareErr(assertPlus, defaults, ...err));
   }
 
   assertPlus.ok = function ok(value, ...err) {
-    assert(Boolean(value), prepareErr(ok, { ...defaults }, ...err));
+    assert(Boolean(value), prepareErr(ok, defaults, ...err));
   };
   assertPlus.fail = function fail(...err) {
-    throw prepareErr(fail, { ...defaults }, ...err);
+    throw prepareErr(fail, defaults, ...err);
   };
 
   assertPlus.equal = function equal(a, b, ...err) {
-    assert(a == b, prepareErr(equal, { ...defaults }, ...err)); // eslint-disable-line eqeqeq
+    assert(a == b, prepareErr(equal, defaults, ...err)); // eslint-disable-line eqeqeq
   };
   assertPlus.notEqual = function notEqual(a, b, ...err) {
-    assert(a != b, prepareErr(notEqual, { ...defaults }, ...err)); // eslint-disable-line eqeqeq
+    assert(a != b, prepareErr(notEqual, defaults, ...err)); // eslint-disable-line eqeqeq
   };
   assertPlus.strictEqual = function strictEqual(a, b, ...err) {
-    assert(a === b, prepareErr(strictEqual, { ...defaults }, ...err));
+    assert(a === b, prepareErr(strictEqual, defaults, ...err));
   };
   assertPlus.notStrictEqual = function notStrictEqual(a, b, ...err) {
-    assert(a !== b, prepareErr(notStrictEqual, { ...defaults }, ...err));
+    assert(a !== b, prepareErr(notStrictEqual, defaults, ...err));
   };
 
   assertPlus.includes = function includes(items, item, ...err) {
     assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-    assert(items.includes(item), prepareErr(includes, { ...defaults }, ...err));
+    assert(items.includes(item), prepareErr(includes, defaults, ...err));
   };
   assertPlus.notIncludes = function notIncludes(items, item, ...err) {
     assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-    assert(items.includes(item) === false, prepareErr(notIncludes, { ...defaults }, ...err));
+    assert(items.includes(item) === false, prepareErr(notIncludes, defaults, ...err));
   };
 
   return assertPlus;
