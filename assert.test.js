@@ -149,4 +149,51 @@ describe('http-assert-plus', () => {
     });
 
   });
+
+  describe('#create', () => {
+    let instance = null;
+    before(() => {
+      instance = assert.create({ service: 'EXTERNAL-SERVICE', hostname: 'api.example.com' });
+      ok(typeof instance === 'function', 'Expected instance to be a function');
+      ok(typeof instance.ok === 'function', 'Expected instance to be a function');
+      ok(typeof instance.fail === 'function', 'Expected instance to be a function');
+    });
+
+    it('should create an error, merging in defaults', () => {
+      try {
+        instance.fail(404, 'New Error', { method: 'GET', path: '/users' });
+        ok.fail('Should have thrown an error');
+      } catch (err) {
+        ok(err instanceof Error, 'Expected err to be an instance of Error');
+        ok.strictEqual(err.message, 'New Error');
+        ok.deepStrictEqual({ ...err }, {
+          service: 'EXTERNAL-SERVICE',
+          hostname: 'api.example.com',
+          method: 'GET',
+          path: '/users',
+          status: 404,
+          statusCode: 404,
+          statusText: 'Not Found',
+        });
+      }
+    });
+
+    it('should create an error, overriding in defaults', () => {
+      try {
+        instance.fail(501, 'New Error', { hostname: 'api2.example.com' });
+        ok.fail('Should have thrown an error');
+      } catch (err) {
+        ok(err instanceof Error, 'Expected err to be an instance of Error');
+        ok.strictEqual(err.message, 'New Error');
+        ok.deepStrictEqual({ ...err }, {
+          service: 'EXTERNAL-SERVICE',
+          hostname: 'api2.example.com',
+          status: 501,
+          statusCode: 501,
+          statusText: 'Not Implemented',
+        });
+      }
+    });
+
+  });
 });

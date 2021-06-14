@@ -4,7 +4,7 @@ function assert(value, err) {
   }
 }
 
-function prepareErr(assertConstructor, ...args) {
+function prepareErr(assertConstructor, defaults, ...args) {
   const isStatus = s => typeof s === 'number' && typeof statuses[`${s}`] === 'string';
   const isErrorLike = e => typeof e === 'string' || e instanceof Error;
   const isObject = o => Object.prototype.toString.call(o) === '[object Object]';
@@ -59,9 +59,9 @@ function prepareErr(assertConstructor, ...args) {
   if (typeof Error.captureStackTrace === 'function') {
     Error.captureStackTrace(err, assertConstructor);
   }
-  if (isObject(props)) {
-    Object.assign(err, props);
-  }
+
+  Object.assign(err, { ...defaults, ...props });
+
   if (isStatus(status)) {
     err.status = err.statusCode = status;
     err.statusText = statuses[`${status}`];
@@ -70,37 +70,45 @@ function prepareErr(assertConstructor, ...args) {
   return err;
 }
 
-module.exports = function assertPlus(value, ...err) {
-  assert(value, prepareErr(assertPlus, ...err));
-};
-module.exports.ok = function ok(value, ...err) {
-  assert(Boolean(value), prepareErr(ok, ...err));
-};
-module.exports.fail = function fail(...err) {
-  throw prepareErr(fail, ...err);
-};
+function createAssertions(defaults) {
+  function assertPlus(value, ...err) {
+    assert(value, prepareErr(assertPlus, { ...defaults }, ...err));
+  }
 
-module.exports.equal = function equal(a, b, ...err) {
-  assert(a == b, prepareErr(equal, ...err)); // eslint-disable-line eqeqeq
-};
-module.exports.notEqual = function notEqual(a, b, ...err) {
-  assert(a != b, prepareErr(notEqual, ...err)); // eslint-disable-line eqeqeq
-};
-module.exports.strictEqual = function strictEqual(a, b, ...err) {
-  assert(a === b, prepareErr(strictEqual, ...err));
-};
-module.exports.notStrictEqual = function notStrictEqual(a, b, ...err) {
-  assert(a !== b, prepareErr(notStrictEqual, ...err));
-};
+  assertPlus.ok = function ok(value, ...err) {
+    assert(Boolean(value), prepareErr(ok, { ...defaults }, ...err));
+  };
+  assertPlus.fail = function fail(...err) {
+    throw prepareErr(fail, { ...defaults }, ...err);
+  };
 
-module.exports.includes = function includes(items, item, ...err) {
-  assert(item && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-  assert(items.includes(item), prepareErr(includes, ...err));
-};
-module.exports.notIncludes = function notIncludes(items, item, ...err) {
-  assert(item && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-  assert(items.includes(item) === false, prepareErr(notIncludes, ...err));
-};
+  assertPlus.equal = function equal(a, b, ...err) {
+    assert(a == b, prepareErr(equal, { ...defaults }, ...err)); // eslint-disable-line eqeqeq
+  };
+  assertPlus.notEqual = function notEqual(a, b, ...err) {
+    assert(a != b, prepareErr(notEqual, { ...defaults }, ...err)); // eslint-disable-line eqeqeq
+  };
+  assertPlus.strictEqual = function strictEqual(a, b, ...err) {
+    assert(a === b, prepareErr(strictEqual, { ...defaults }, ...err));
+  };
+  assertPlus.notStrictEqual = function notStrictEqual(a, b, ...err) {
+    assert(a !== b, prepareErr(notStrictEqual, { ...defaults }, ...err));
+  };
+
+  assertPlus.includes = function includes(items, item, ...err) {
+    assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
+    assert(items.includes(item), prepareErr(includes, { ...defaults }, ...err));
+  };
+  assertPlus.notIncludes = function notIncludes(items, item, ...err) {
+    assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
+    assert(items.includes(item) === false, prepareErr(notIncludes, { ...defaults }, ...err));
+  };
+
+  return assertPlus;
+}
+
+module.exports = createAssertions();
+module.exports.create = createAssertions;
 
 const statuses = {
   // @link https://github.com/jshttp/statuses/blob/454ceb6e0bfea4f889be244de2538df8afb4dc2a/src/iana.json
