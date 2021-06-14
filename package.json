@@ -35,6 +35,11 @@
     "node": ">= 8.0.0",
     "npm": ">= 6.0.0"
   },
+  "browserslist": [
+    "defaults",
+    "not IE",
+    "maintained node versions"
+  ],
   "_moduleAliases": {
     "http-assert-plus": "./"
   },
