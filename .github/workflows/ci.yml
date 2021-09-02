@@ -53,7 +53,7 @@ jobs:
       - uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.test_number }}
+          flag-name: run-${{ matrix.node }}
           parallel: true
 
   coverage:
