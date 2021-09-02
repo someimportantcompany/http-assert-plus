@@ -2,7 +2,7 @@ name: CI
 on:
   - push
 jobs:
-  lint:
+  test:
     runs-on: ubuntu-latest
     env:
       NODE_VERSION: 12.x
@@ -23,8 +23,13 @@ jobs:
 
       - run: npm ci
       - run: npm run lint
+      - run: npm test
 
-  test:
+      - uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  versions:
     name: node-${{ matrix.node }}
     runs-on: ubuntu-latest
     needs: lint
@@ -49,19 +54,3 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
-
-      - uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          flag-name: run-${{ matrix.node }}
-          parallel: true
-
-  coverage:
-    runs-on: ubuntu-latest
-    needs: test
-    steps:
-    - name: Coveralls Finished
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        parallel-finished: true
