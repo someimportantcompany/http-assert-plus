@@ -45,12 +45,21 @@
   },
   "mocha": {
     "exit": true,
-    "require": [ "module-alias/register" ],
-    "spec": [ "*.test.js" ],
+    "require": [
+      "module-alias/register"
+    ],
+    "spec": [
+      "*.test.js"
+    ],
     "ui": "bdd"
   },
   "nyc": {
-    "exclude": [ "*.test.js" ],
-    "reporter": [ "lcov", "text" ]
+    "exclude": [
+      "*.test.js"
+    ],
+    "reporter": [
+      "lcov",
+      "text"
+    ]
   }
 }
