@@ -25,9 +25,9 @@ jobs:
       - run: npm run lint
       - run: npm test
 
-      - uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+      # - uses: coverallsapp/github-action@master
+      #   with:
+      #     github-token: ${{ secrets.GITHUB_TOKEN }}
 
   versions:
     name: node-${{ matrix.node }}
