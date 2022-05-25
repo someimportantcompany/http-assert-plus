@@ -178,7 +178,7 @@ describe('http-assert-plus', () => {
       }
     });
 
-    it('should create an error, overriding in defaults', () => {
+    it('should create an error, overriding the defaults', () => {
       try {
         instance.fail(501, 'New Error', { hostname: 'api2.example.com' });
         ok.fail('Should have thrown an error');

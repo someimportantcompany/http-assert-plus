@@ -103,7 +103,7 @@ function createAssertions(defaults = {}) {
   };
   assertPlus.notIncludes = function notIncludes(items, item, ...err) {
     assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-    assert(items.includes(item) === false, prepareErr(notIncludes, defaults, ...err));
+    assert(!items.includes(item), prepareErr(notIncludes, defaults, ...err));
   };
 
   return assertPlus;
