@@ -5,7 +5,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      NODE_VERSION: 12.x
+      NODE_VERSION: 16.x
     steps:
       - uses: actions/checkout@v2
       - name: Use node-${{ env.NODE_VERSION }}
@@ -52,5 +52,4 @@ jobs:
             ${{ runner.os }}-
 
       - run: npm ci
-      - run: npm run lint
       - run: npm test
