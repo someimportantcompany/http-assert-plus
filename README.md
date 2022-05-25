@@ -1,8 +1,8 @@
 # http-assert-plus
 
 [![NPM](https://badge.fury.io/js/http-assert-plus.svg)](https://npm.im/http-assert-plus)
-[![CI](https://github.com/someimportantcompany/http-assert-plus/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/someimportantcompany/http-assert-plus/actions/workflows/ci.yml)
-[![Coverage](https://coveralls.io/repos/github/someimportantcompany/http-assert-plus/badge.svg)](https://coveralls.io/github/someimportantcompany/http-assert-plus)
+[![CI](https://github.com/jdrydn/http-assert-plus/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/jdrydn/http-assert-plus/actions/workflows/ci.yml)
+<!-- [![Coverage](https://coveralls.io/repos/github/jdrydn/http-assert-plus/badge.svg)](https://coveralls.io/github/jdrydn/http-assert-plus) -->
 
 More assertions with status codes.
 
@@ -10,13 +10,13 @@ More assertions with status codes.
 const assert = require('http-assert-plus');
 
 const username = 'jdrydn';
-assert(username === 'someimportantcompany', 403, 'Authorization failed', {
+assert(username === 'not-jdrydn', 403, 'Authorization failed', {
   code: 'NOT_AUTHORIZED',
   username,
 });
 
 // Error: Authorization failed
-//     at createErr (http-assert-plus/README.md:13:7) {
+//     at http-assert-plus/README.md:13:7 {
 //   code: 'NOT_AUTHORIZED',
 //   statusCode: 403,
 //   status: 403,
@@ -112,7 +112,7 @@ req.assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict:
 req.assert.deepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not equal');
 req.assert.strictDeepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not strict-equal');
 // Error: Array does not strict-equal
-//     at REPL:1:27 (http-assert-plus/README.md:113:27) {
+//     at http-assert-plus/README.md:113:27 {
 //   statusCode: 400,
 //   status: 400,
 //   statusText: 'Bad Request'
@@ -127,3 +127,5 @@ Yes! Not all browsers support [`Error.captureStackTrace`](https://developer.mozi
 const { origin } = window.location;
 assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'));
 ```
+
+If you don't use a construct such as `new Error`, when reading stacktraces just ignore the first line as it'll always be the `assert` function :wink:
