@@ -65,9 +65,10 @@ interface assert {
   notIncludes(items: Array<any>, item: any, status: number, err: ErrorLike): void;
   notIncludes(items: Array<any>, item: any, err: ErrorLike, opts: object): void;
   notIncludes(items: Array<any>, item: any, status: number, err: ErrorLike, opts: object): void;
-
-  create(defaults: object): assert
 }
 
-declare const exp: assert;
+declare const exp: assert & {
+  create(defaults?: object): assert;
+};
+
 export default exp;
