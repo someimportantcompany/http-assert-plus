@@ -2,12 +2,15 @@
 
 [![NPM](https://badge.fury.io/js/http-assert-plus.svg)](https://npm.im/http-assert-plus)
 [![CI](https://github.com/jdrydn/http-assert-plus/actions/workflows/ci.yml/badge.svg?branch=master&event=push)](https://github.com/jdrydn/http-assert-plus/actions/workflows/ci.yml)
+[![Typescript](https://img.shields.io/badge/TS-TypeScript-%230074c1.svg)](https://www.typescriptlang.org)
 <!-- [![Coverage](https://coveralls.io/repos/github/jdrydn/http-assert-plus/badge.svg)](https://coveralls.io/github/jdrydn/http-assert-plus) -->
 
 More assertions with status codes.
 
 ```js
 const assert = require('http-assert-plus');
+// or
+import assert from 'http-assert-plus';
 
 const username = 'jdrydn';
 assert(username === 'not-jdrydn', 403, 'Authorization failed', {
@@ -16,7 +19,7 @@ assert(username === 'not-jdrydn', 403, 'Authorization failed', {
 });
 
 // Error: Authorization failed
-//     at http-assert-plus/README.md:13:7 {
+//     at http-assert-plus/README.md:15:7 {
 //   code: 'NOT_AUTHORIZED',
 //   statusCode: 403,
 //   status: 403,
@@ -28,7 +31,7 @@ assert(username === 'not-jdrydn', 403, 'Authorization failed', {
 ## Install
 
 ```
-$ npm install http-assert-plus
+$ npm install --save http-assert-plus
 ```
 
 ## API
@@ -70,7 +73,7 @@ Tests whether `a` does not include `b` - where `a` has a method `includes`.
 You can optionally create your own instance of `http-assert-plus`, useful if you want to add your own methods for common assertions:
 
 ```js
-const assert = require('http-assert-plus');
+import assert from 'http-assert-plus';
 
 ctx.assert = assert.create();
 ctx.assert.isAuthenticated = (props = null) => {
@@ -98,8 +101,8 @@ ctx.assert.isAuthenticated({ action: 'EditUser' });
 If you're looking for deep equality checks, check out [`deep-equal`](https://npm.im/deep-equal):
 
 ```js
-const assert = require('http-assert-plus');
-const deepEqual = require('deep-equal');
+import assert from 'http-assert-plus';
+import deepEqual from 'deep-equal';
 
 assert(deepEqual(a, b), 400, 'These two are not entirely equal');
 assert(deepEqual(a, b, { strict: true }), 400, 'These two are not entirely equal');
@@ -112,7 +115,7 @@ req.assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict:
 req.assert.deepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not equal');
 req.assert.strictDeepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not strict-equal');
 // Error: Array does not strict-equal
-//     at http-assert-plus/README.md:113:27 {
+//     at http-assert-plus/README.md:115:27 {
 //   statusCode: 400,
 //   status: 400,
 //   statusText: 'Bad Request'
