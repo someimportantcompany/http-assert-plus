@@ -4,14 +4,15 @@
   "description": "More assertions with status codes",
   "main": "./assert.js",
   "scripts": {
+    "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
     "lint": "eslint --ext .js .",
     "test": "nyc mocha",
     "preversion": "npm run lint && npm test",
     "postversion": "git push && git push --tags"
   },
-  "repository": "https://github.com/jdrydn/http-assert-plus",
-  "homepage": "https://github.com/jdrydn/http-assert-plus#readme",
-  "bugs": "https://github.com/jdrydn/http-assert-plus/issues",
+  "repository": "https://github.com/someimportantcompany/http-assert-plus",
+  "homepage": "https://github.com/someimportantcompany/http-assert-plus#readme",
+  "bugs": "https://github.com/someimportantcompany/http-assert-plus/issues",
   "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "files": [
