@@ -11,7 +11,7 @@
     "postversion": "git push && git push --tags"
   },
   "repository": "https://github.com/someimportantcompany/http-assert-plus",
-  "homepage": "https://github.com/someimportantcompany/http-assert-plus#readme",
+  "homepage": "https://someimportantcompany.github.io/http-assert-plus",
   "bugs": "https://github.com/someimportantcompany/http-assert-plus/issues",
   "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
