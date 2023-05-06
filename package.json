@@ -39,7 +39,6 @@
   },
   "browserslist": [
     "defaults",
-    "not IE",
     "maintained node versions"
   ],
   "_moduleAliases": {

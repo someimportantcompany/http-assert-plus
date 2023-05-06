@@ -1,0 +1,7 @@
+title: http-assert-plus
+description: More assertions with status codes
+baseurl: /http-assert-plus
+repository: someimportantcompany/http-assert-plus
+
+remote_theme: someimportantcompany/jekyll-documentation
+permalink: pretty
