@@ -1,85 +1,110 @@
-type ErrorLike = string | Error;
-type AdditionalProps = Record<string, any>
+/**
+ * @author: jdrydn <james@jdrydn.com> (https://jdrydn.com)
+ * @license: MIT
+ * @link: https://github.com/someimportantcompany/http-assert-plus
+ */
 
-// @link https://developer.mozilla.org/en-US/docs/Glossary/Falsy
-type Not_T = '' | 0 | -0 | 0n | false | null | undefined | typeof NaN;
+/**
+ * Assert that a value is not falsey.
+ */
+declare function assert(value: any): asserts value;
+declare function assert(value: any, status: number): asserts value;
+declare function assert(value: any, err: Error | string): asserts value;
+declare function assert(value: any, opts: Record<string, any>): asserts value;
+declare function assert(value: any, status: number, err: Error | string): asserts value;
+declare function assert(value: any, err: Error | string, opts: Record<string, any>): asserts value;
+declare function assert(value: any, status: number, err: Error | string, opts: Record<string, any>): asserts value;
 
-interface assert {
-  <T>(value: T | Not_T): asserts value is T;
-  <T>(value: T | Not_T, status: number): asserts value is T;
-  <T>(value: T | Not_T, err: ErrorLike): asserts value is T;
-  <T>(value: T | Not_T, opts: AdditionalProps): asserts value is T;
-  <T>(value: T | Not_T, status: number, err: ErrorLike): asserts value is T;
-  <T>(value: T | Not_T, err: ErrorLike, opts: AdditionalProps): asserts value is T;
-  <T>(value: T | Not_T, status: number, err: ErrorLike, opts: object): asserts value is T;
+declare namespace assert {
 
-  ok<T>(value: T | Not_T): asserts value is T;
-  ok<T>(value: T | Not_T, status: number): asserts value is T;
-  ok<T>(value: T | Not_T, err: ErrorLike): asserts value is T;
-  ok<T>(value: T | Not_T, opts: AdditionalProps): asserts value is T;
-  ok<T>(value: T | Not_T, status: number, err: ErrorLike): asserts value is T;
-  ok<T>(value: T | Not_T, err: ErrorLike, opts: AdditionalProps): asserts value is T;
-  ok<T>(value: T | Not_T, status: number, err: ErrorLike, opts: AdditionalProps): asserts value is T;
+  /**
+   * Assert that a value is not falsey.
+   */
+  function ok(value: any): asserts value;
+  function ok(value: any, status: number): asserts value;
+  function ok(value: any, err: Error | string): asserts value;
+  function ok(value: any, opts: Record<string, any>): asserts value;
+  function ok(value: any, status: number, err: Error | string): asserts value;
+  function ok(value: any, err: Error | string, opts: Record<string, any>): asserts value;
+  function ok(value: any, status: number, err: Error | string, opts: Record<string, any>): asserts value;
 
-  fail(): never;
-  fail(status: number): never;
-  fail(err: ErrorLike): never;
-  fail(opts: AdditionalProps): never;
-  fail(status: number, err: ErrorLike): never;
-  fail(err: ErrorLike, opts: AdditionalProps): never;
-  fail(status: number, err: ErrorLike, opts: AdditionalProps): never;
+  /**
+   * Always throw an error.
+   */
+  function fail(): never;
+  function fail(status: number): never;
+  function fail(err: Error | string): never;
+  function fail(opts: Record<string, any>): never;
+  function fail(status: number, err: Error | string): never;
+  function fail(err: Error | string, opts: Record<string, any>): never;
+  function fail(status: number, err: Error | string, opts: Record<string, any>): never;
 
-  equal(a: any, b: any): void;
-  equal(a: any, b: any, status: number): void;
-  equal(a: any, b: any, err: ErrorLike): void;
-  equal(a: any, b: any, opts: AdditionalProps): void;
-  equal(a: any, b: any, status: number, err: ErrorLike): void;
-  equal(a: any, b: any, err: ErrorLike, opts: AdditionalProps): void;
-  equal(a: any, b: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Compare loose equality between two values.
+   */
+  function equal(a: any, b: any): void;
+  function equal(a: any, b: any, status: number): void;
+  function equal(a: any, b: any, err: Error | string): void;
+  function equal(a: any, b: any, opts: Record<string, any>): void;
+  function equal(a: any, b: any, status: number, err: Error | string): void;
+  function equal(a: any, b: any, err: Error | string, opts: Record<string, any>): void;
+  function equal(a: any, b: any, status: number, err: Error | string, opts: Record<string, any>): void;
 
-  notEqual(a: any, b: any): void;
-  notEqual(a: any, b: any, status: number): void;
-  notEqual(a: any, b: any, err: ErrorLike): void;
-  notEqual(a: any, b: any, opts: AdditionalProps): void;
-  notEqual(a: any, b: any, status: number, err: ErrorLike): void;
-  notEqual(a: any, b: any, err: ErrorLike, opts: AdditionalProps): void;
-  notEqual(a: any, b: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Compare loose inequality between two values.
+   */
+  function notEqual(a: any, b: any): void;
+  function notEqual(a: any, b: any, status: number): void;
+  function notEqual(a: any, b: any, err: Error | string): void;
+  function notEqual(a: any, b: any, opts: Record<string, any>): void;
+  function notEqual(a: any, b: any, status: number, err: Error | string): void;
+  function notEqual(a: any, b: any, err: Error | string, opts: Record<string, any>): void;
+  function notEqual(a: any, b: any, status: number, err: Error | string, opts: Record<string, any>): void;
 
-  strictEqual(a: any, b: any): void;
-  strictEqual(a: any, b: any, status: number): void;
-  strictEqual(a: any, b: any, err: ErrorLike): void;
-  strictEqual(a: any, b: any, opts: AdditionalProps): void;
-  strictEqual(a: any, b: any, status: number, err: ErrorLike): void;
-  strictEqual(a: any, b: any, err: ErrorLike, opts: AdditionalProps): void;
-  strictEqual(a: any, b: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Compare strict equality between two values.
+   */
+  function strictEqual(a: any, b: any): void;
+  function strictEqual(a: any, b: any, status: number): void;
+  function strictEqual(a: any, b: any, err: Error | string): void;
+  function strictEqual(a: any, b: any, opts: Record<string, any>): void;
+  function strictEqual(a: any, b: any, status: number, err: Error | string): void;
+  function strictEqual(a: any, b: any, err: Error | string, opts: Record<string, any>): void;
+  function strictEqual(a: any, b: any, status: number, err: Error | string, opts: Record<string, any>): void;
 
-  notStrictEqual(a: any, b: any): void;
-  notStrictEqual(a: any, b: any, status: number): void;
-  notStrictEqual(a: any, b: any, err: ErrorLike): void;
-  notStrictEqual(a: any, b: any, opts: AdditionalProps): void;
-  notStrictEqual(a: any, b: any, status: number, err: ErrorLike): void;
-  notStrictEqual(a: any, b: any, err: ErrorLike, opts: AdditionalProps): void;
-  notStrictEqual(a: any, b: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Compare strict inequality between two values.
+   */
+  function notStrictEqual(a: any, b: any): void;
+  function notStrictEqual(a: any, b: any, status: number): void;
+  function notStrictEqual(a: any, b: any, err: Error | string): void;
+  function notStrictEqual(a: any, b: any, opts: Record<string, any>): void;
+  function notStrictEqual(a: any, b: any, status: number, err: Error | string): void;
+  function notStrictEqual(a: any, b: any, err: Error | string, opts: Record<string, any>): void;
+  function notStrictEqual(a: any, b: any, status: number, err: Error | string, opts: Record<string, any>): void;
 
-  includes(items: Array<any>, item: any): void;
-  includes(items: Array<any>, item: any, status: number): void;
-  includes(items: Array<any>, item: any, err: ErrorLike): void;
-  includes(items: Array<any>, item: any, opts: AdditionalProps): void;
-  includes(items: Array<any>, item: any, status: number, err: ErrorLike): void;
-  includes(items: Array<any>, item: any, err: ErrorLike, opts: AdditionalProps): void;
-  includes(items: Array<any>, item: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Check that a value is within a list.
+   */
+  function includes(items: Array<any>, item: any): void;
+  function includes(items: Array<any>, item: any, status: number): void;
+  function includes(items: Array<any>, item: any, err: Error | string): void;
+  function includes(items: Array<any>, item: any, opts: Record<string, any>): void;
+  function includes(items: Array<any>, item: any, status: number, err: Error | string): void;
+  function includes(items: Array<any>, item: any, err: Error | string, opts: Record<string, any>): void;
+  function includes(items: Array<any>, item: any, status: number, err: Error | string, opts: Record<string, any>): void;
 
-  notIncludes(items: Array<any>, item: any): void;
-  notIncludes(items: Array<any>, item: any, status: number): void;
-  notIncludes(items: Array<any>, item: any, err: ErrorLike): void;
-  notIncludes(items: Array<any>, item: any, opts: AdditionalProps): void;
-  notIncludes(items: Array<any>, item: any, status: number, err: ErrorLike): void;
-  notIncludes(items: Array<any>, item: any, err: ErrorLike, opts: AdditionalProps): void;
-  notIncludes(items: Array<any>, item: any, status: number, err: ErrorLike, opts: AdditionalProps): void;
+  /**
+   * Check that a value is not within a list.
+   */
+  function notIncludes(items: Array<any>, item: any): void;
+  function notIncludes(items: Array<any>, item: any, status: number): void;
+  function notIncludes(items: Array<any>, item: any, err: Error | string): void;
+  function notIncludes(items: Array<any>, item: any, opts: Record<string, any>): void;
+  function notIncludes(items: Array<any>, item: any, status: number, err: Error | string): void;
+  function notIncludes(items: Array<any>, item: any, err: Error | string, opts: Record<string, any>): void;
+  function notIncludes(items: Array<any>, item: any, status: number, err: Error | string, opts: Record<string, any>): void;
+
 }
 
-declare const exp: assert & {
-  create(defaults?: AdditionalProps): assert;
-};
-
-export default exp;
+export = assert;
