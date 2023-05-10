@@ -8,9 +8,9 @@
 More assertions with status codes.
 
 ```js
-const assert = require('http-assert-plus');
-// or
 import assert from 'http-assert-plus';
+// or
+const assert = require('http-assert-plus');
 
 const username = 'jdrydn';
 assert(username === 'not-jdrydn', 403, 'Authorization failed', {
@@ -19,7 +19,7 @@ assert(username === 'not-jdrydn', 403, 'Authorization failed', {
 });
 
 // Error: Authorization failed
-//     at http-assert-plus/README.md:15:7 {
+//     at http-assert-plus/README.md:22:1 {
 //   code: 'NOT_AUTHORIZED',
 //   statusCode: 403,
 //   status: 403,
@@ -87,7 +87,7 @@ ctx.assert.isAuthenticated = (props = null) => {
 // Later on:
 ctx.assert.isAuthenticated({ action: 'EditUser' });
 // Error: You are not authenticated
-//     at isAuthenticated (http-assert-plus/README.md:78:9) {
+//     at isAuthenticated (http-assert-plus/README.md:81:3) {
 //   code: 'NOT_AUTHENTICATED',
 //   statusCode: 401,
 //   status: 401,
@@ -128,7 +128,21 @@ Yes! Not all browsers support [`Error.captureStackTrace`](https://developer.mozi
 
 ```js
 const { origin } = window.location;
-assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'));
+
+// In browsers, do this:
+assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'), { origin });
+// Error: Expected origin to start with https://
+//     at http-assert-plus/README.md:133:39 {
+//   origin: 'http://localhost:4000',
+// }
+
+// Not this
+assert(origin.startsWith('https://'), 'Expected origin to start with https://');
+// Error: Expected origin to start with https://
+//     at node_modules/http-assert-plus/index.cjs:56:38 {
+//     at http-assert-plus/README.md:133:39 {
+//   origin: 'http://localhost:4000',
+// }
 ```
 
 If you don't use a construct such as `new Error`, when reading stacktraces just ignore the first line as it'll always be the `assert` function :wink:
