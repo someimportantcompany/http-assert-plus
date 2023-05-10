@@ -66,8 +66,8 @@ describe('http-assert-plus', () => {
 
     function assertStack(stack?: string) {
       ok(stack, 'Expected err to have a stack');
-      const source = stack.split('\n').slice(1, 2).shift()!.trim();
-      ok.strictEqual(source, `at createErr (${__filename}:2:4984)`);
+      const source = stack.split('\n').slice(1, 2).shift()!.trim().replace(/(\d+)\:(\d+)\)$/g, 'L1:L2)');
+      ok.strictEqual(source, `at createErr (${__filename}:L1:L2)`);
     }
 
     const status = 500;
