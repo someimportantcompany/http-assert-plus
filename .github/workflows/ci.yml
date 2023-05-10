@@ -4,22 +4,13 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 16.x
     steps:
-      - uses: actions/checkout@v2
-      - name: Use node-${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v1
+      - uses: actions/checkout@v3
+      - name: Use node-16
+        uses: actions/setup-node@v3
         with:
-          node-version: ${{ env.NODE_VERSION }}
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-${{ env.NODE_VERSION }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.NODE_VERSION }}-
-            ${{ runner.os }}-
+          node-version: 16
+          cache: npm
 
       - run: npm ci
       - run: npm run lint
@@ -35,21 +26,17 @@ jobs:
     needs: test
     strategy:
       matrix:
-        node: [ '12.x', '14.x', '16.x' ]
+        node:
+          - 16
+          - 18
+          - 20
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Use node-${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node }}
-      - name: Cache node_modules
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm # npm cache files are stored in `~/.npm` on Linux/macOS
-          key: ${{ runner.os }}-${{ matrix.node }}-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ matrix.node }}-
-            ${{ runner.os }}-
+          cache: npm
 
       - run: npm ci
       - run: npm test
