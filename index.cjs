@@ -1,14 +1,20 @@
-function assert(value, err) {
-  if (Boolean(value) === false) {
-    throw err;
-  }
-}
+/**
+ * @author: jdrydn <james@jdrydn.com> (https://jdrydn.com)
+ * @license: MIT
+ * @link: https://github.com/someimportantcompany/http-assert-plus
+ */
 
 const isStatus = s => typeof s === 'number' && typeof statuses[`${s}`] === 'string';
 const isErrorLike = e => typeof e === 'string' || e instanceof Error;
 const isObject = o => Object.prototype.toString.call(o) === '[object Object]';
 
-function prepareErr(assertConstructor, defaults, ...args) {
+function assert(value, err) {
+  if (!value) {
+    throw err;
+  }
+}
+
+function prepareErr(assertConstructor, ...args) {
   let err = 'An error occurred',
       props = null,
       status = null;
@@ -60,7 +66,7 @@ function prepareErr(assertConstructor, defaults, ...args) {
     Error.captureStackTrace(err, assertConstructor);
   }
 
-  Object.assign(err, defaults || {}, props || {});
+  Object.assign(err, props || {});
 
   if (isStatus(status)) {
     err.status = err.statusCode = status;
@@ -70,47 +76,140 @@ function prepareErr(assertConstructor, defaults, ...args) {
   return err;
 }
 
-function createAssertions(defaults = {}) {
-  assert(isObject(defaults), new TypeError('Expected createAssertions arg to be an object'));
-
-  function assertPlus(value, ...err) {
-    assert(value, prepareErr(assertPlus, defaults, ...err));
-  }
-
-  assertPlus.ok = function ok(value, ...err) {
-    assert(Boolean(value), prepareErr(ok, defaults, ...err));
-  };
-  assertPlus.fail = function fail(...err) {
-    throw prepareErr(fail, defaults, ...err);
-  };
-
-  assertPlus.equal = function equal(a, b, ...err) {
-    assert(a == b, prepareErr(equal, defaults, ...err)); // eslint-disable-line eqeqeq
-  };
-  assertPlus.notEqual = function notEqual(a, b, ...err) {
-    assert(a != b, prepareErr(notEqual, defaults, ...err)); // eslint-disable-line eqeqeq
-  };
-  assertPlus.strictEqual = function strictEqual(a, b, ...err) {
-    assert(a === b, prepareErr(strictEqual, defaults, ...err));
-  };
-  assertPlus.notStrictEqual = function notStrictEqual(a, b, ...err) {
-    assert(a !== b, prepareErr(notStrictEqual, defaults, ...err));
-  };
-
-  assertPlus.includes = function includes(items, item, ...err) {
-    assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-    assert(items.includes(item), prepareErr(includes, defaults, ...err));
-  };
-  assertPlus.notIncludes = function notIncludes(items, item, ...err) {
-    assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
-    assert(!items.includes(item), prepareErr(notIncludes, defaults, ...err));
-  };
-
-  return assertPlus;
+/**
+ * Assert that a value is not falsey
+ *
+ * @param {*} value Input value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if the input is falsey
+ * @return {void}
+ */
+function assertPlus(value, ...err) {
+  assert(value, prepareErr(assertPlus, ...err));
 }
 
-module.exports = createAssertions();
-module.exports.create = createAssertions;
+/**
+ * Assert that a value is not falsey
+ *
+ * @param {*} value Input value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if the input is falsey
+ * @return {void}
+ */
+assertPlus.ok = function ok(value, ...err) {
+  assert(Boolean(value), prepareErr(ok, ...err));
+};
+
+/**
+ * Always throw an error.
+ *
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will always throw an error
+ * @return {void}
+ */
+assertPlus.fail = function fail(...err) {
+  throw prepareErr(fail, ...err);
+};
+
+/**
+ * Compare loose equality between two values
+ *
+ * @param {*} a Actual value
+ * @param {*} b Expected value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if a != b
+ * @return {void}
+ */
+assertPlus.equal = function equal(a, b, ...err) {
+  assert(a == b, prepareErr(equal, ...err)); // eslint-disable-line eqeqeq
+};
+
+/**
+ * Compare loose inequality between two values
+ *
+ * @param {*} a Actual value
+ * @param {*} b Expected value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if a == b
+ * @return {void}
+ */
+assertPlus.notEqual = function notEqual(a, b, ...err) {
+  assert(a != b, prepareErr(notEqual, ...err)); // eslint-disable-line eqeqeq
+};
+
+/**
+ * Compare strict equality between two values
+ *
+ * @param {*} a Actual value
+ * @param {*} b Expected value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if a !== b
+ * @return {void}
+ */
+assertPlus.strictEqual = function strictEqual(a, b, ...err) {
+  assert(a === b, prepareErr(strictEqual, ...err));
+};
+
+/**
+ * Compare strict inequality between two values
+ *
+ * @param {*} a Actual value
+ * @param {*} b Expected value
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if a === b
+ * @return {void}
+ */
+assertPlus.notStrictEqual = function notStrictEqual(a, b, ...err) {
+  assert(a !== b, prepareErr(notStrictEqual, ...err));
+};
+
+/**
+ * Check that a value is within a list
+ *
+ * @param {*[]} list A list of values
+ * @param {*} value The value to check for
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if b is not within a
+ * @return {void}
+ */
+assertPlus.includes = function includes(items, item, ...err) {
+  assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
+  assert(items.includes(item), prepareErr(includes, ...err));
+};
+
+/**
+ * Check that a value is not within a list
+ *
+ * @param {*[]} list A list of values
+ * @param {*} value The value to check for
+ * @param {number} [status] HTTP status
+ * @param {Error|string} [err] Error (message)
+ * @param {Object} [opts] Options
+ * @throws Will throw if b is within a
+ * @return {void}
+ */
+assertPlus.notIncludes = function notIncludes(items, item, ...err) {
+  assert(items && typeof items.includes === 'function', new TypeError('Expected first arg to have an includes method'));
+  assert(!items.includes(item), prepareErr(notIncludes, ...err));
+};
+
+module.exports = assertPlus;
 
 const statuses = {
   // @link https://github.com/jshttp/statuses/blob/454ceb6e0bfea4f889be244de2538df8afb4dc2a/src/iana.json
