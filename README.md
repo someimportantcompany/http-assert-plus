@@ -68,34 +68,6 @@ Tests whether `a` includes `b` - where `a` has a method call `includes`.
 #### `assert.notIncludes(a, b, [status], [message], [props])`
 Tests whether `a` does not include `b` - where `a` has a method `includes`.
 
-### Creating your own instance
-
-You can optionally create your own instance of `http-assert-plus`, useful if you want to add your own methods for common assertions:
-
-```js
-import assert from 'http-assert-plus';
-
-ctx.assert = assert.create();
-ctx.assert.isAuthenticated = (props = null) => {
-  const { isAuthenticated } = ctx.state;
-  assert(isAuthenticated, 401, 'You are not authenticated', {
-    code: 'NOT_AUTHENTICATED',
-    ...props,
-  });
-};
-
-// Later on:
-ctx.assert.isAuthenticated({ action: 'EditUser' });
-// Error: You are not authenticated
-//     at isAuthenticated (http-assert-plus/README.md:81:3) {
-//   code: 'NOT_AUTHENTICATED',
-//   statusCode: 401,
-//   status: 401,
-//   statusText: 'Unauthorized',
-//   username: 'jdrydn'
-// }
-```
-
 ### What about deep equality?
 
 If you're looking for deep equality checks, check out [`deep-equal`](https://npm.im/deep-equal):
@@ -115,7 +87,7 @@ req.assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict:
 req.assert.deepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not equal');
 req.assert.strictDeepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not strict-equal');
 // Error: Array does not strict-equal
-//     at http-assert-plus/README.md:115:27 {
+//     at http-assert-plus/README.md:90:27 {
 //   statusCode: 400,
 //   status: 400,
 //   statusText: 'Bad Request'
@@ -132,7 +104,7 @@ const { origin } = window.location;
 // In browsers, do this:
 assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'), { origin });
 // Error: Expected origin to start with https://
-//     at http-assert-plus/README.md:133:39 {
+//     at http-assert-plus/README.md:107:39 {
 //   origin: 'http://localhost:4000',
 // }
 
@@ -140,7 +112,7 @@ assert(origin.startsWith('https://'), new Error('Expected origin to start with h
 assert(origin.startsWith('https://'), 'Expected origin to start with https://');
 // Error: Expected origin to start with https://
 //     at node_modules/http-assert-plus/index.cjs:56:38 {
-//     at http-assert-plus/README.md:133:39 {
+//     at http-assert-plus/README.md:115:1 {
 //   origin: 'http://localhost:4000',
 // }
 ```
