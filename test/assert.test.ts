@@ -1,9 +1,11 @@
-const assert = require('http-assert-plus');
-const ok = require('assert');
-const util = require('util');
+import assert from 'http-assert-plus';
+import ok from 'assert';
+import util from 'util';
 
 describe('http-assert-plus', () => {
-  const comparisons = {
+  const comparisons: {
+    [label: string]: [ boolean, () => void],
+  } = {
     'assert(true)': [ true, () => assert(true) ],
     'assert(false)': [ false, () => assert(false) ],
     'assert.ok(true)': [ true, () => assert.ok(true) ],
@@ -23,48 +25,56 @@ describe('http-assert-plus', () => {
     'assert.notIncludes([ 1, 2, 3 ], 1)': [ false, () => assert.notIncludes([ 1, 2, 3 ], 1) ],
   };
 
+  function tryAssert(fn: () => void): Error | null {
+    try {
+      fn();
+      return null;
+    } catch (err) {
+      return err as Error;
+    }
+  }
+
   for (const label in comparisons) {
+    /* istanbul ignore else */
     if (comparisons.hasOwnProperty(label) && Array.isArray(comparisons[label])) {
       const [ result, attempt ] = comparisons[label];
       ok(typeof result === 'boolean', `Expected "${label}" case to have a boolean`);
       ok(typeof attempt === 'function', `Expected "${label}" case to have a function`);
 
-      it(`should ${result ? 'pass' : 'fail'} with ${label}`, result
-        ? () => attempt()
-        : () => {
-          try {
-            attempt();
-            ok.fail('Should have failed');
-          } catch (err) {
-            ok(err instanceof Error, 'Expected err to be an instance of Error');
-            ok.strictEqual(err.message, 'An error occurred');
-            ok.strictEqual(err.status, undefined);
-          }
-        });
+      it(`should ${result ? 'pass' : 'fail'} with ${label}`, () => {
+        const err = tryAssert(attempt);
+
+        if (result) {
+          ok.strictEqual(err, null, `Expected "${label}" case to pass`);
+        } else {
+          ok(err instanceof Error, 'Expected err to be an instance of Error');
+          ok.strictEqual(err.message, 'An error occurred');
+          ok.strictEqual((err as any).status, undefined);
+        }
+      });
     }
   }
 
   describe('descriptors', () => {
-    function createErr(...args) {
+    function createErr(...args: [any?, any?, any?]): any {
       try {
         assert.fail(...args);
-        return null;
       } catch (err) {
         return err;
       }
     }
 
-    function assertStack(stack) {
-      ok(typeof stack === 'string', 'Expected err to have a stack');
-      const source = stack.split('\n').slice(1, 2).shift().trim().replace(__dirname, '');
-      ok.strictEqual(source, 'at createErr (/assert.test.js:50:16)');
+    function assertStack(stack?: string) {
+      ok(stack, 'Expected err to have a stack');
+      const source = stack.split('\n').slice(1, 2).shift()!.trim();
+      ok.strictEqual(source, `at createErr (${__filename}:2:4984)`);
     }
 
     const status = 500;
     const statusText = 'Internal Server Error';
     const message = 'Error Message';
     const props = { code: 'ERR_CODE', odd: 1, even: 2 };
-    const inspect = obj => util.inspect(obj, { colors: false, depth: 1, compact: true });
+    const inspect = (obj: any) => util.inspect(obj, { colors: false, depth: 1, compact: true });
 
     it(`should create an error with: assert.fail(${status}, '${message}', ${inspect(props)})`, () => {
       const err = createErr(status, message, props);
@@ -139,60 +149,53 @@ describe('http-assert-plus', () => {
     });
 
     it('should throw an error with invalid arguments', () => {
-      try {
-        assert.fail(true);
-        ok.fail('Should have errored');
-      } catch (err) {
-        ok(err instanceof TypeError, 'Expected err to be an instance of TypeError');
-        ok.strictEqual(err.message, 'Invalid arguments passed to http-assert-plus');
-      }
+      const err = tryAssert(() => {
+        // @ts-ignore
+        return assert.fail(true);
+      });
+      ok(err instanceof TypeError, 'Expected err to be an instance of TypeError');
+      ok.strictEqual(err.message, 'Invalid arguments passed to http-assert-plus');
     });
 
   });
 
   describe('#create', () => {
-    let instance = null;
+    let instance: Omit<typeof assert, 'create'> | undefined = undefined;
     before(() => {
       instance = assert.create({ service: 'EXTERNAL-SERVICE', hostname: 'api.example.com' });
       ok(typeof instance === 'function', 'Expected instance to be a function');
+      // @ts-ignore
       ok(typeof instance.ok === 'function', 'Expected instance to be a function');
+      // @ts-ignore
       ok(typeof instance.fail === 'function', 'Expected instance to be a function');
     });
 
     it('should create an error, merging in defaults', () => {
-      try {
-        instance.fail(404, 'New Error', { method: 'GET', path: '/users' });
-        ok.fail('Should have thrown an error');
-      } catch (err) {
-        ok(err instanceof Error, 'Expected err to be an instance of Error');
-        ok.strictEqual(err.message, 'New Error');
-        ok.deepStrictEqual({ ...err }, {
-          service: 'EXTERNAL-SERVICE',
-          hostname: 'api.example.com',
-          method: 'GET',
-          path: '/users',
-          status: 404,
-          statusCode: 404,
-          statusText: 'Not Found',
-        });
-      }
+      const err = tryAssert(() => instance!.fail(404, 'New Error', { method: 'GET', path: '/users' }));
+      ok(err instanceof Error, 'Expected err to be an instance of Error');
+      ok.strictEqual(err.message, 'New Error');
+      ok.deepStrictEqual({ ...err }, {
+        service: 'EXTERNAL-SERVICE',
+        hostname: 'api.example.com',
+        method: 'GET',
+        path: '/users',
+        status: 404,
+        statusCode: 404,
+        statusText: 'Not Found',
+      });
     });
 
     it('should create an error, overriding the defaults', () => {
-      try {
-        instance.fail(501, 'New Error', { hostname: 'api2.example.com' });
-        ok.fail('Should have thrown an error');
-      } catch (err) {
-        ok(err instanceof Error, 'Expected err to be an instance of Error');
-        ok.strictEqual(err.message, 'New Error');
-        ok.deepStrictEqual({ ...err }, {
-          service: 'EXTERNAL-SERVICE',
-          hostname: 'api2.example.com',
-          status: 501,
-          statusCode: 501,
-          statusText: 'Not Implemented',
-        });
-      }
+      const err = tryAssert(() => instance!.fail(501, 'New Error', { hostname: 'api2.example.com' }));
+      ok(err instanceof Error, 'Expected err to be an instance of Error');
+      ok.strictEqual(err.message, 'New Error');
+      ok.deepStrictEqual({ ...err }, {
+        service: 'EXTERNAL-SERVICE',
+        hostname: 'api2.example.com',
+        status: 501,
+        statusCode: 501,
+        statusText: 'Not Implemented',
+      });
     });
 
   });

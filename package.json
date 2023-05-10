@@ -2,7 +2,7 @@
   "name": "http-assert-plus",
   "version": "1.1.2",
   "description": "More assertions with status codes",
-  "main": "./assert.js",
+  "main": "./index.cjs",
   "scripts": {
     "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
     "lint": "eslint --ext .js .",
@@ -16,22 +16,27 @@
   "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "files": [
-    "assert.js",
-    "assert.d.ts"
+    "index.cjs",
+    "index.d.ts"
   ],
   "keywords": [
     "http",
     "assert"
   ],
   "devDependencies": {
+    "@types/mocha": "^10.0.1",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "babel-eslint": "^10.1.0",
-    "eslint": "^6.8.0",
-    "eslint-plugin-mocha": "^5.3.0",
+    "eslint": "^8.40.0",
+    "eslint-plugin-mocha": "^10.1.0",
+    "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-sort-requires": "^2.1.0",
-    "mocha": "^6.2.3",
-    "module-alias": "^2.2.2",
-    "nyc": "^15.1.0"
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0",
+    "source-map-support": "^0.5.21",
+    "ts-node": "^10.9.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^5.0.4"
   },
   "engines": {
     "node": ">= 12.0.0",
@@ -41,23 +46,25 @@
     "defaults",
     "maintained node versions"
   ],
-  "_moduleAliases": {
-    "http-assert-plus": "./"
-  },
   "mocha": {
     "exit": true,
     "require": [
-      "module-alias/register"
+      "ts-node/register",
+      "source-map-support/register",
+      "tsconfig-paths/register"
     ],
     "spec": [
-      "./*.test.js"
+      "./test/*.test.ts"
     ],
     "ui": "bdd"
   },
   "nyc": {
+    "extension:": [
+      ".ts"
+    ],
     "exclude": [
       "./*.d.ts",
-      "./*.test.js"
+      "./*.test.ts"
     ],
     "reporter": [
       "lcov",
