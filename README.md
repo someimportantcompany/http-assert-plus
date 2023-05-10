@@ -78,16 +78,8 @@ import deepEqual from 'deep-equal';
 
 assert(deepEqual(a, b), 400, 'These two are not entirely equal');
 assert(deepEqual(a, b, { strict: true }), 400, 'These two are not entirely equal');
-
-// Or create your own http-assert-plus instance:
-req.assert = assert.create();
-req.assert.deepEqual = (a, b, ...args) => assert(deepEqual(a, b), ...args);
-req.assert.strictDeepEqual = (a, b, ...args) => assert(deepEqual(a, b, { strict: true }), ...args);
-
-req.assert.deepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not equal');
-req.assert.strictDeepEqual([ 1, 2, 3 ], [ '1', 2, 3.0 ], 400, 'Array does not strict-equal');
 // Error: Array does not strict-equal
-//     at http-assert-plus/README.md:90:27 {
+//     at http-assert-plus/README.md:72:1 {
 //   statusCode: 400,
 //   status: 400,
 //   statusText: 'Bad Request'
@@ -104,7 +96,7 @@ const { origin } = window.location;
 // In browsers, do this:
 assert(origin.startsWith('https://'), new Error('Expected origin to start with https://'), { origin });
 // Error: Expected origin to start with https://
-//     at http-assert-plus/README.md:107:39 {
+//     at http-assert-plus/README.md:99:39 {
 //   origin: 'http://localhost:4000',
 // }
 
@@ -112,7 +104,7 @@ assert(origin.startsWith('https://'), new Error('Expected origin to start with h
 assert(origin.startsWith('https://'), 'Expected origin to start with https://');
 // Error: Expected origin to start with https://
 //     at node_modules/http-assert-plus/index.cjs:56:38 {
-//     at http-assert-plus/README.md:115:1 {
+//     at http-assert-plus/README.md:107:1 {
 //   origin: 'http://localhost:4000',
 // }
 ```
