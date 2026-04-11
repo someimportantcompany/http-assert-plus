@@ -9,7 +9,6 @@ on:
 
 jobs:
   test:
-    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -24,7 +23,7 @@ jobs:
       - run: npm run docs:build
 
   versions:
-    name: Test node-${{ matrix.node }}
+    name: test node-${{ matrix.node }}
     needs: test
     runs-on: ubuntu-latest
     strategy:
