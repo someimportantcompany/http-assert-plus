@@ -6,9 +6,7 @@
     "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
     "build": "tsup",
     "lint": "eslint .",
-    "test": "vitest run",
-    "preversion": "npm run lint && npm test",
-    "postversion": "git push && git push --tags"
+    "test:unit": "vitest run"
   },
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
