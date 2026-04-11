@@ -6,15 +6,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Use node-16
+      - name: Use node-18
         uses: actions/setup-node@v3
         with:
-          node-version: 16
+          node-version: 18.x
           cache: npm
 
       - run: npm ci
       - run: npm run lint
-      - run: npm test
+
+      - run: npm run test:unit
+      - run: npm run build
+      - run: npm run test:integration
 
       # - uses: coverallsapp/github-action@master
       #   with:
@@ -27,9 +30,11 @@ jobs:
     strategy:
       matrix:
         node:
-          - 16
-          - 18
-          - 20
+          - 18.x
+          - 20.x
+          - 22.x
+          - 24.x
+          - 25.x
     steps:
       - uses: actions/checkout@v3
       - name: Use node-${{ matrix.node }}
@@ -39,4 +44,6 @@ jobs:
           cache: npm
 
       - run: npm ci
-      - run: npm test
+      - run: npm run test:unit
+      - run: npm run build
+      - run: npm run test:integration

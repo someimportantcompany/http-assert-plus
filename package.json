@@ -1,74 +1,52 @@
 {
   "name": "http-assert-plus",
-  "version": "2.0.1",
+  "version": "2.1.0-alpha.0",
   "description": "More assertions with status codes",
-  "main": "./index.cjs",
   "scripts": {
     "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
-    "lint": "eslint --ext .cjs .",
-    "test": "nyc mocha",
-    "preversion": "npm run lint && npm test",
-    "postversion": "git push && git push --tags"
+    "build": "tsup",
+    "lint": "npm run lint:eslint && npm run lint:types",
+    "lint:eslint": "eslint .",
+    "lint:types": "tsc --noEmit",
+    "test:unit": "vitest run --dir src",
+    "test:integration": "vitest run --dir integration-tests"
+  },
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
   },
   "repository": "https://github.com/someimportantcompany/http-assert-plus",
-  "homepage": "https://someimportantcompany.github.io/http-assert-plus",
   "bugs": "https://github.com/someimportantcompany/http-assert-plus/issues",
   "author": "jdrydn <james@jdrydn.com> (https://jdrydn.com)",
   "license": "MIT",
   "files": [
-    "index.cjs",
-    "index.d.ts"
+    "dist"
   ],
   "keywords": [
     "http",
     "assert"
   ],
   "devDependencies": {
-    "@babel/eslint-parser": "^7.21.8",
-    "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^5.26.0",
-    "eslint": "^8.40.0",
-    "eslint-plugin-mocha": "^10.1.0",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-sort-requires": "^2.1.0",
-    "mocha": "^10.2.0",
-    "nyc": "^15.1.0",
-    "source-map-support": "^0.5.21",
-    "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.4"
+    "@eslint/js": "^9.25.0",
+    "eslint": "^9.25.0",
+    "tsup": "^8.5.1",
+    "typescript-eslint": "^8.31.0",
+    "typescript": "^5.0.4",
+    "vitest": "^3.1.1"
   },
   "engines": {
-    "node": ">= 16.0.0",
-    "npm": ">= 8.0.0"
-  },
-  "browserslist": [
-    "defaults",
-    "maintained node versions"
-  ],
-  "mocha": {
-    "exit": true,
-    "require": [
-      "ts-node/register",
-      "source-map-support/register",
-      "tsconfig-paths/register"
-    ],
-    "spec": [
-      "./test/*.test.ts"
-    ],
-    "ui": "bdd"
-  },
-  "nyc": {
-    "extension:": [
-      ".ts"
-    ],
-    "exclude": [
-      "./*.d.ts",
-      "./*.test.ts"
-    ],
-    "reporter": [
-      "lcov",
-      "text"
-    ]
+    "node": ">= 18.0.0",
+    "npm": ">= 9.0.0"
   }
 }
