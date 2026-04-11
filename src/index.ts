@@ -4,7 +4,7 @@
  * @link: https://github.com/someimportantcompany/http-assert-plus
  */
 import {
-  assert,
+  throwFalsey,
   prepareErr,
   type AssertError,
   type ErrorLike,
@@ -18,27 +18,27 @@ interface Includable<T = any> {
 /**
  * Assert that a value is not falsey.
  */
-function assertPlus(value: any): asserts value;
-function assertPlus(value: any, status: number): asserts value;
-function assertPlus(value: any, err: ErrorLike): asserts value;
-function assertPlus(value: any, opts: Props): asserts value;
-function assertPlus(value: any, status: number, err: ErrorLike): asserts value;
-function assertPlus(value: any, err: ErrorLike, opts: Props): asserts value;
-function assertPlus(
+function assert(value: any): asserts value;
+function assert(value: any, status: number): asserts value;
+function assert(value: any, err: ErrorLike): asserts value;
+function assert(value: any, opts: Props): asserts value;
+function assert(value: any, status: number, err: ErrorLike): asserts value;
+function assert(value: any, err: ErrorLike, opts: Props): asserts value;
+function assert(
   value: any,
   status: number,
   err: ErrorLike,
   opts: Props,
 ): asserts value;
-function assertPlus(value: any, ...err: any[]): asserts value {
-  assert(value, prepareErr(assertPlus, ...err));
+function assert(value: any, ...err: any[]): asserts value {
+  throwFalsey(value, prepareErr(assert, ...err));
 }
 
 /**
  * Assert that a value is not falsey.
  */
-assertPlus.ok = function ok(value: any, ...err: any[]): asserts value {
-  assert(Boolean(value), prepareErr(ok, ...err));
+assert.ok = function ok(value: any, ...err: any[]): asserts value {
+  throwFalsey(Boolean(value), prepareErr(ok, ...err));
 } as {
   (value: any): asserts value;
   (value: any, status: number): asserts value;
@@ -52,7 +52,7 @@ assertPlus.ok = function ok(value: any, ...err: any[]): asserts value {
 /**
  * Always throw an error.
  */
-assertPlus.fail = function fail(...err: any[]): never {
+assert.fail = function fail(...err: any[]): never {
   throw prepareErr(fail, ...err);
 } as {
   (): never;
@@ -67,9 +67,9 @@ assertPlus.fail = function fail(...err: any[]): never {
 /**
  * Compare loose equality between two values.
  */
-assertPlus.equal = function equal(a: any, b: any, ...err: any[]): void {
+assert.equal = function equal(a: any, b: any, ...err: any[]): void {
   // eslint-disable-next-line eqeqeq
-  assert(a == b, prepareErr(equal, ...err));
+  throwFalsey(a == b, prepareErr(equal, ...err));
 } as {
   (a: any, b: any): void;
   (a: any, b: any, status: number): void;
@@ -83,9 +83,9 @@ assertPlus.equal = function equal(a: any, b: any, ...err: any[]): void {
 /**
  * Compare loose inequality between two values.
  */
-assertPlus.notEqual = function notEqual(a: any, b: any, ...err: any[]): void {
+assert.notEqual = function notEqual(a: any, b: any, ...err: any[]): void {
   // eslint-disable-next-line eqeqeq
-  assert(a != b, prepareErr(notEqual, ...err));
+  throwFalsey(a != b, prepareErr(notEqual, ...err));
 } as {
   (a: any, b: any): void;
   (a: any, b: any, status: number): void;
@@ -99,12 +99,12 @@ assertPlus.notEqual = function notEqual(a: any, b: any, ...err: any[]): void {
 /**
  * Compare strict equality between two values.
  */
-assertPlus.strictEqual = function strictEqual(
+assert.strictEqual = function strictEqual(
   a: any,
   b: any,
   ...err: any[]
 ): void {
-  assert(a === b, prepareErr(strictEqual, ...err));
+  throwFalsey(a === b, prepareErr(strictEqual, ...err));
 } as {
   (a: any, b: any): void;
   (a: any, b: any, status: number): void;
@@ -118,12 +118,12 @@ assertPlus.strictEqual = function strictEqual(
 /**
  * Compare strict inequality between two values.
  */
-assertPlus.notStrictEqual = function notStrictEqual(
+assert.notStrictEqual = function notStrictEqual(
   a: any,
   b: any,
   ...err: any[]
 ): void {
-  assert(a !== b, prepareErr(notStrictEqual, ...err));
+  throwFalsey(a !== b, prepareErr(notStrictEqual, ...err));
 } as {
   (a: any, b: any): void;
   (a: any, b: any, status: number): void;
@@ -137,16 +137,16 @@ assertPlus.notStrictEqual = function notStrictEqual(
 /**
  * Check that a value is within a list.
  */
-assertPlus.includes = function includes(
+assert.includes = function includes(
   items: Includable,
   item: any,
   ...err: any[]
 ): void {
-  assert(
+  throwFalsey(
     items && typeof items.includes === "function",
     new TypeError("Expected first arg to have an includes method"),
   );
-  assert(items.includes(item), prepareErr(includes, ...err));
+  throwFalsey(items.includes(item), prepareErr(includes, ...err));
 } as {
   (items: Array<any>, item: any): void;
   (items: Array<any>, item: any, status: number): void;
@@ -166,16 +166,16 @@ assertPlus.includes = function includes(
 /**
  * Check that a value is not within a list.
  */
-assertPlus.notIncludes = function notIncludes(
+assert.notIncludes = function notIncludes(
   items: Includable,
   item: any,
   ...err: any[]
 ): void {
-  assert(
+  throwFalsey(
     items && typeof items.includes === "function",
     new TypeError("Expected first arg to have an includes method"),
   );
-  assert(!items.includes(item), prepareErr(notIncludes, ...err));
+  throwFalsey(!items.includes(item), prepareErr(notIncludes, ...err));
 } as {
   (items: Array<any>, item: any): void;
   (items: Array<any>, item: any, status: number): void;
@@ -192,5 +192,5 @@ assertPlus.notIncludes = function notIncludes(
   ): void;
 };
 
-export default assertPlus;
+export default assert;
 export type { AssertError };

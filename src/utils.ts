@@ -91,7 +91,7 @@ export function isObject(o: unknown): o is Record<string, any> {
   return Object.prototype.toString.call(o) === "[object Object]";
 }
 
-export function assert(value: unknown, err: Error): asserts value {
+export function throwFalsey(value: unknown, err: Error): asserts value {
   if (!value) {
     throw err;
   }
@@ -108,35 +108,35 @@ export function prepareErr(
 
   if (args.length === 3) {
     [status, err, props] = args;
-    assert(
+    throwFalsey(
       isStatus(status),
       new TypeError("Expected first argument to be a HTTP status"),
     );
-    assert(
+    throwFalsey(
       isErrorLike(err),
       new TypeError("Expected second argument to be a string or Error"),
     );
-    assert(
+    throwFalsey(
       isObject(props),
       new TypeError("Expected third argument to be an object"),
     );
   } else if (args.length === 2 && typeof args[0] === "number") {
     [status, err] = args;
-    assert(
+    throwFalsey(
       isStatus(status),
       new TypeError("Expected first argument to be a HTTP status"),
     );
-    assert(
+    throwFalsey(
       isErrorLike(err),
       new TypeError("Expected second argument to be a string or Error"),
     );
   } else if (args.length === 2 && isErrorLike(args[0])) {
     [err, props] = args;
-    assert(
+    throwFalsey(
       isErrorLike(err),
       new TypeError("Expected second argument to be a string or Error"),
     );
-    assert(
+    throwFalsey(
       isObject(props),
       new TypeError("Expected third argument to be an object"),
     );
@@ -150,7 +150,7 @@ export function prepareErr(
       null;
   } else if (args.length === 1 && typeof args[0] === "number") {
     [status] = args;
-    assert(
+    throwFalsey(
       isStatus(status),
       new TypeError("Expected argument to be a HTTP status"),
     );
