@@ -1,42 +1,55 @@
 name: CI
+
 on:
-  - push
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - name: Use node-16
-        uses: actions/setup-node@v3
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
         with:
-          node-version: 16
+          node-version-file: ./.nvmrc
           cache: npm
-
       - run: npm ci
       - run: npm run lint
       - run: npm test
-
-      # - uses: coverallsapp/github-action@master
-      #   with:
-      #     github-token: ${{ secrets.GITHUB_TOKEN }}
+      - run: npm pack --dry-run
+      - run: npm run docs:build
 
   versions:
-    name: node-${{ matrix.node }}
-    runs-on: ubuntu-latest
+    name: test node-${{ matrix.node }}
     needs: test
+    runs-on: ubuntu-latest
     strategy:
       matrix:
         node:
-          - 16
-          - 18
-          - 20
+          - 16.x
+          - 18.x
+          - 20.x
+          - 22.x
+      fail-fast: false
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
       - name: Use node-${{ matrix.node }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-
       - run: npm ci
       - run: npm test
+
+  ci-success:
+    needs: [test, versions]
+    runs-on: ubuntu-slim
+    if: always()
+    steps:
+      - name: Check all success or skipped
+        run: echo "$NEEDS_JSON" | jq -e 'map(select(.result != "success" and .result != "skipped")) | length == 0' || exit 1
+        env:
+          NEEDS_JSON: ${{ toJson(needs) }}

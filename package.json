@@ -4,7 +4,9 @@
   "description": "More assertions with status codes",
   "main": "./index.cjs",
   "scripts": {
-    "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
+    "docs:build": "vitepress build",
+    "docs:dev": "vitepress dev",
+    "docs:preview": "vitepress preview",
     "lint": "eslint --ext .cjs .",
     "test": "nyc mocha",
     "preversion": "npm run lint && npm test",
@@ -36,7 +38,8 @@
     "source-map-support": "^0.5.21",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "vitepress": "^2.0.0-alpha.17"
   },
   "engines": {
     "node": ">= 16.0.0",
