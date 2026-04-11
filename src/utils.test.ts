@@ -7,7 +7,6 @@ import {
   isObject,
   isStatus,
   prepareErr,
-  type AssertError,
 } from "./utils";
 
 describe("isStatus", () => {

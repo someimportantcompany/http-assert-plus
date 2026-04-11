@@ -5,7 +5,9 @@
   "scripts": {
     "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
     "build": "tsup",
-    "lint": "eslint .",
+    "lint": "npm run lint:eslint && npm run lint:types",
+    "lint:eslint": "eslint .",
+    "lint:types": "tsc --noEmit",
     "test:unit": "vitest run --dir src",
     "test:integration": "vitest run --dir integration-tests"
   },
