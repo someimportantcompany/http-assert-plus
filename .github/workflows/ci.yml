@@ -8,8 +8,8 @@ on:
       - synchronize
 
 jobs:
-  ci:
-    name: CI
+  test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -20,10 +20,11 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
+      - run: npm pack --dry-run
       - run: npm run docs:build
 
-  ci-versions:
-    name: CI - node-${{ matrix.node }}
+  versions:
+    name: Test node-${{ matrix.node }}
     needs: test
     runs-on: ubuntu-latest
     strategy:
@@ -32,6 +33,7 @@ jobs:
           - 16.x
           - 18.x
           - 20.x
+          - 22.x
       fail-fast: false
     steps:
       - uses: actions/checkout@v6
