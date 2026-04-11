@@ -1,6 +1,6 @@
 {
   "name": "http-assert-plus",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "description": "More assertions with status codes",
   "scripts": {
     "docs:preview": "docker run --rm -it -v $PWD/docs:/srv/jekyll -p 4000:4000 jekyll/jekyll:4.2.0 jekyll serve",
@@ -45,7 +45,7 @@
     "vitest": "^3.1.1"
   },
   "engines": {
-    "node": ">= 16.0.0",
-    "npm": ">= 8.0.0"
+    "node": ">= 18.0.0",
+    "npm": ">= 9.0.0"
   }
 }
